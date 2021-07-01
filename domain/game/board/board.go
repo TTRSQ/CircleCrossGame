@@ -3,8 +3,8 @@ package board
 import (
 	"errors"
 
+	"github.com/TTRSQ/CircleCrossGame/domain/constants"
 	"github.com/TTRSQ/CircleCrossGame/domain/game/action"
-	"github.com/TTRSQ/CircleCrossGame/domain/game/constants"
 )
 
 /*
@@ -19,21 +19,25 @@ const (
 	HEIGHT = 3
 )
 
-type Board []constants.NodeStatus
+type Board struct {
+	status []*constants.Symbol
+}
 
 func NewBoard() Board {
 	return Board{
-		constants.NONE, constants.NONE, constants.NONE,
-		constants.NONE, constants.NONE, constants.NONE,
-		constants.NONE, constants.NONE, constants.NONE,
+		status: []*constants.Symbol{
+			nil, nil, nil,
+			nil, nil, nil,
+			nil, nil, nil,
+		},
 	}
 }
 
 func (b Board) Act(act action.Item) error {
-	if b[act.Y()*WIDTH+act.X()] != constants.NONE {
+	if b.status[act.Y()*WIDTH+act.X()] != nil {
 		return errors.New("already placed")
 	}
-	b[act.Y()*WIDTH+act.X()] = act.Simbol()
+	*b.status[act.Y()*WIDTH+act.X()] = act.Symbol()
 	return nil
 }
 
@@ -50,30 +54,24 @@ func lineBinaryList() []int {
 	}
 }
 
-func (b Board) Binary(simbol constants.NodeStatus) (int, error) {
-	if simbol == constants.NONE {
-		return 0, errors.New("invald simbol")
-	}
+func (b Board) Binary(symbol constants.Symbol) (int, error) {
 	stamp := []int{
 		512, 256, 128,
 		64, 32, 16,
 		8, 4, 2,
 	}
 	sum := 0
-	for i := range b {
-		if b[i] == simbol {
+	for i := range b.status {
+		if *b.status[i] == symbol {
 			sum += stamp[i]
 		}
 	}
 	return sum, nil
 }
 
-func (b Board) CountLine(simbol constants.NodeStatus) (int, error) {
-	if simbol == constants.NONE {
-		return 0, errors.New("invald simbol")
-	}
+func (b Board) CountLine(symbol constants.Symbol) (int, error) {
 
-	binary, _ := b.Binary(simbol)
+	binary, _ := b.Binary(symbol)
 	count := 0
 	for _, line := range lineBinaryList() {
 		if binary&line == line {
@@ -81,4 +79,14 @@ func (b Board) CountLine(simbol constants.NodeStatus) (int, error) {
 		}
 	}
 	return count, nil
+}
+
+func (b Board) CanPutPoints() [][]int {
+	ret := [][]int{}
+	for i := range b.status {
+		if b.status[i] == nil {
+			ret = append(ret, []int{i % WIDTH, i / WIDTH})
+		}
+	}
+	return ret
 }

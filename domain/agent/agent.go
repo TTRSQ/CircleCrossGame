@@ -1,6 +1,10 @@
 package agent
 
-import "github.com/TTRSQ/CircleCrossGame/domain/game/action"
+import (
+	"github.com/TTRSQ/CircleCrossGame/domain/constants"
+	"github.com/TTRSQ/CircleCrossGame/domain/game/action"
+	"github.com/TTRSQ/CircleCrossGame/domain/game/board"
+)
 
 /*
 ## task
@@ -8,5 +12,6 @@ import "github.com/TTRSQ/CircleCrossGame/domain/game/action"
 */
 
 type Agent interface {
-	NextAction() []action.Item
+	NextAction(board board.Board) (*action.Item, error)
+	Symbol() constants.Symbol
 }
