@@ -11,27 +11,30 @@ $ go run main.go
  | |
  | |
 input:x y
+0 0
+you placed (0 0)
+o| |
+ | |
+ | |
+cp placed (0 1)
+o| |
+x| |
+ | |
+input:x y
 1 1
+you placed (1 1)
+o| |
+x|o|
  | |
- |o|
- | |
-randcp placed (2 0)
- | |x
- |o|
+cp placed (2 0)
+o| |x
+x|o|
  | |
 input:x y
 2 2
- | |x
- |o|
+you placed (2 2)
+o| |x
+x|o|
  | |o
-randcp placed (1 0)
- |x|x
- |o|
- | |o
-input:x y
-0 0
-o|x|x
- |o|
- | |o
-done
+winner: you
 ```
