@@ -14,8 +14,8 @@ import (
 
 func main() {
 	manager, err := game.NewManager(
-		user.Get(constants.CIRCLE),
-		randcp.Get(constants.CROSS),
+		user.Get(constants.CIRCLE, "you"),
+		randcp.Get(constants.CROSS, "cp"),
 		board.NewBoard(),
 		console.Get(),
 	)
@@ -25,7 +25,12 @@ func main() {
 	err = manager.Play()
 
 	if err == nil {
-		fmt.Println("done")
+		winner := manager.Winner()
+		if winner == nil {
+			fmt.Println("drow")
+		} else {
+			fmt.Println("winner: " + winner.Name())
+		}
 	} else {
 		log.Fatalln(err)
 	}

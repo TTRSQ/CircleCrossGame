@@ -13,18 +13,20 @@ import (
 // ランダムな打ち手(cp)
 type randcp struct {
 	symbol constants.Symbol
+	name   string
 }
 
-func Get(symbol constants.Symbol) agent.Agent {
+func Get(symbol constants.Symbol, name string) agent.Agent {
 	return &randcp{
 		symbol: symbol,
+		name:   name,
 	}
 }
 
 func (r *randcp) NextAction(board board.Board) (*action.Item, error) {
 	canPutPoints := board.CanPutPoints()
 	selection := rand.Int() % len(canPutPoints)
-	fmt.Println("randcp placed " + fmt.Sprintf(
+	fmt.Println(r.name + " placed " + fmt.Sprintf(
 		"(%d %d)",
 		canPutPoints[selection][0],
 		canPutPoints[selection][1],
@@ -34,4 +36,8 @@ func (r *randcp) NextAction(board board.Board) (*action.Item, error) {
 
 func (r *randcp) Symbol() constants.Symbol {
 	return r.symbol
+}
+
+func (r *randcp) Name() string {
+	return r.name
 }

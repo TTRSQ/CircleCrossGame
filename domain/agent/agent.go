@@ -14,4 +14,5 @@ import (
 type Agent interface {
 	NextAction(board board.Board) (*action.Item, error)
 	Symbol() constants.Symbol
+	Name() string
 }

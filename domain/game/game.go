@@ -18,6 +18,7 @@ type Manager struct {
 	secondAgent agent.Agent
 	board       board.Board
 	display     display.Display
+	winner      agent.Agent
 }
 
 func NewManager(first, second agent.Agent, board board.Board, display display.Display) (*Manager, error) {
@@ -60,7 +61,11 @@ func (m *Manager) acter() (agent.Agent, error) {
 	))
 }
 
-func (m *Manager) winner() (agent.Agent, error) {
+func (m *Manager) Winner() agent.Agent {
+	return m.winner
+}
+
+func (m *Manager) updateWinner() (agent.Agent, error) {
 	firstCounts, err := m.board.CountLine(m.firstAgent.Symbol())
 	if err != nil {
 		return nil, err
@@ -73,9 +78,11 @@ func (m *Manager) winner() (agent.Agent, error) {
 		return nil, nil
 	}
 	if firstCounts > 0 && secondCounts == 0 {
+		m.winner = m.firstAgent
 		return m.firstAgent, nil
 	}
 	if secondCounts > 0 && firstCounts == 0 {
+		m.winner = m.secondAgent
 		return m.secondAgent, nil
 	}
 	return nil, errors.New("line count invalid status" + fmt.Sprintf(
@@ -87,7 +94,7 @@ func (m *Manager) winner() (agent.Agent, error) {
 
 func (m *Manager) Play() error {
 	for {
-		winner, err := m.winner()
+		winner, err := m.updateWinner()
 		if err != nil {
 			return err
 		}
