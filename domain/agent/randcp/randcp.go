@@ -1,6 +1,7 @@
 package randcp
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/TTRSQ/CircleCrossGame/domain/agent"
@@ -22,10 +23,15 @@ func Get(symbol constants.Symbol) agent.Agent {
 
 func (r *randcp) NextAction(board board.Board) (*action.Item, error) {
 	canPutPoints := board.CanPutPoints()
-	selection := rand.Int() / len(canPutPoints)
-	return action.NewItem(canPutPoints[selection][0], canPutPoints[selection][1], u.symbol)
+	selection := rand.Int() % len(canPutPoints)
+	fmt.Println("randcp placed " + fmt.Sprintf(
+		"(%d %d)",
+		canPutPoints[selection][0],
+		canPutPoints[selection][1],
+	))
+	return action.NewItem(canPutPoints[selection][0], canPutPoints[selection][1], r.symbol)
 }
 
 func (r *randcp) Symbol() constants.Symbol {
-	return u.symbol
+	return r.symbol
 }

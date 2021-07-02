@@ -33,11 +33,12 @@ func NewBoard() Board {
 	}
 }
 
-func (b Board) Act(act action.Item) error {
+func (b *Board) Act(act action.Item) error {
 	if b.status[act.Y()*WIDTH+act.X()] != nil {
 		return errors.New("already placed")
 	}
-	*b.status[act.Y()*WIDTH+act.X()] = act.Symbol()
+	symbol := act.Symbol()
+	b.status[act.Y()*WIDTH+act.X()] = &symbol
 	return nil
 }
 
@@ -54,24 +55,23 @@ func lineBinaryList() []int {
 	}
 }
 
-func (b Board) Binary(symbol constants.Symbol) (int, error) {
+func (b *Board) binary(symbol constants.Symbol) (int, error) {
 	stamp := []int{
-		512, 256, 128,
-		64, 32, 16,
-		8, 4, 2,
+		256, 128, 64,
+		32, 16, 8,
+		4, 2, 1,
 	}
 	sum := 0
 	for i := range b.status {
-		if *b.status[i] == symbol {
+		if b.status[i] != nil && *b.status[i] == symbol {
 			sum += stamp[i]
 		}
 	}
 	return sum, nil
 }
 
-func (b Board) CountLine(symbol constants.Symbol) (int, error) {
-
-	binary, _ := b.Binary(symbol)
+func (b *Board) CountLine(symbol constants.Symbol) (int, error) {
+	binary, _ := b.binary(symbol)
 	count := 0
 	for _, line := range lineBinaryList() {
 		if binary&line == line {
@@ -81,7 +81,7 @@ func (b Board) CountLine(symbol constants.Symbol) (int, error) {
 	return count, nil
 }
 
-func (b Board) CanPutPoints() [][]int {
+func (b *Board) CanPutPoints() [][]int {
 	ret := [][]int{}
 	for i := range b.status {
 		if b.status[i] == nil {
@@ -89,4 +89,28 @@ func (b Board) CanPutPoints() [][]int {
 		}
 	}
 	return ret
+}
+
+func (b *Board) Status() [][]*constants.Symbol {
+	ret := [][]*constants.Symbol{}
+
+	for y := 0; y < HEIGHT; y++ {
+		row := []*constants.Symbol{}
+		for x := 0; x < WIDTH; x++ {
+			row = append(row, b.status[y*WIDTH+x])
+		}
+		ret = append(ret, row)
+	}
+
+	return ret
+}
+
+func (b *Board) CountSymbol(symbol constants.Symbol) int {
+	sum := 0
+	for i := range b.status {
+		if b.status[i] != nil && *b.status[i] == symbol {
+			sum++
+		}
+	}
+	return sum
 }

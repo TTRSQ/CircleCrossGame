@@ -23,7 +23,7 @@ func Get(symbol constants.Symbol) agent.Agent {
 func (u *user) NextAction(board board.Board) (*action.Item, error) {
 	fmt.Println("input:x y")
 	var x, y int
-	fmt.Scanf("&d &d", &x, &y)
+	fmt.Scanf("%d %d", &x, &y)
 	return action.NewItem(x, y, u.symbol)
 }
 
